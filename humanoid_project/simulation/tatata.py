@@ -1,4 +1,4 @@
-import pybullet as p, pybullet_data
+import pybullet as p, pybullet_data  # type: ignore
 
 p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
