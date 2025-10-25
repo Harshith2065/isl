@@ -5,10 +5,10 @@ import numpy as np
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 
-# Define BODY25 indices mapping (0-24)
+# BODY25 indices mapping
 BODY25_MAP = [
     0,  # Nose
-    1,  # Neck (approx midpoint of shoulders)
+    1,  # Neck
     11,  # Right shoulder
     12,  # Left shoulder
     23,  # Right hip
@@ -17,26 +17,11 @@ BODY25_MAP = [
     14,  # Left elbow
     15,  # Right wrist
     16,  # Left wrist
-    25,  # (invalid in BODY25, remove or adjust)
-    26,  # (invalid, remove)
-    27,  # (invalid, remove)
-    28,  # (invalid, remove)
-    29,  # (invalid, remove)
-    30,  # (invalid, remove)
-    31,  # (invalid, remove)
-    32,  # (invalid, remove)
     5,  # Right eye
     6,  # Left eye
     7,  # Right ear
     8,  # Left ear
-    9,  # Mouth corner?
-    10,  # Mouth corner?
-    23,  # Duplicate hip
-    24,  # Duplicate hip
 ]
-
-# Only keep indices <=24 to avoid IndexError
-BODY25_MAP = [i for i in BODY25_MAP if i <= 24]
 
 
 def extract_keypoints(image_path):
@@ -101,28 +86,63 @@ def select_main_skeleton(skeletons):
 
 
 def skeleton_to_joint_angles(skel):
-    """Convert a single skeleton [25,3] to θ_init vector with extra DOFs."""
+    """Convert a single skeleton [25,3] to θ_init vector with extended DOFs."""
     theta_init = []
 
-    # Example angles (you can expand further):
     # Right arm
     theta_init.append(
         angle_between_points(skel[11, :2], skel[13, :2], skel[15, :2])
     )  # Shoulder
+    theta_init.append(
+        angle_between_points(skel[13, :2], skel[15, :2], skel[15, :2] + [10, 0])
+    )  # Elbow-wrist direction
+
     # Left arm
     theta_init.append(angle_between_points(skel[12, :2], skel[14, :2], skel[16, :2]))
+    theta_init.append(
+        angle_between_points(skel[14, :2], skel[16, :2], skel[16, :2] + [10, 0])
+    )
+
     # Right leg
     theta_init.append(
-        angle_between_points(skel[23, :2], skel[23, :2], skel[24, :2])
+        angle_between_points(skel[23, :2], skel[23, :2], skel[23, :2] + [0, 50])
     )  # Hip
+    theta_init.append(
+        angle_between_points(
+            skel[23, :2], skel[23, :2] + [0, 50], skel[23, :2] + [0, 100]
+        )
+    )  # Knee
+
     # Left leg
-    theta_init.append(angle_between_points(skel[24, :2], skel[24, :2], skel[23, :2]))
-    # Torso (Neck-Shoulder-Hip)
-    theta_init.append(angle_between_points(skel[1, :2], skel[11, :2], skel[23, :2]))
-    theta_init.append(angle_between_points(skel[1, :2], skel[12, :2], skel[24, :2]))
-    # Neck (Nose-Neck-Shoulders)
-    theta_init.append(angle_between_points(skel[0, :2], skel[1, :2], skel[11, :2]))
-    theta_init.append(angle_between_points(skel[0, :2], skel[1, :2], skel[12, :2]))
+    theta_init.append(
+        angle_between_points(skel[24, :2], skel[24, :2], skel[24, :2] + [0, 50])
+    )
+    theta_init.append(
+        angle_between_points(
+            skel[24, :2], skel[24, :2] + [0, 50], skel[24, :2] + [0, 100]
+        )
+    )
+
+    # Torso angles (Neck-Shoulder-Hip)
+    theta_init.append(
+        angle_between_points(skel[1, :2], skel[11, :2], skel[23, :2])
+    )  # Right
+    theta_init.append(
+        angle_between_points(skel[1, :2], skel[12, :2], skel[24, :2])
+    )  # Left
+
+    # Neck angles
+    theta_init.append(
+        angle_between_points(skel[0, :2], skel[1, :2], skel[11, :2])
+    )  # Right
+    theta_init.append(
+        angle_between_points(skel[0, :2], skel[1, :2], skel[12, :2])
+    )  # Left
+
+    # Optional: Eye/head orientation (simple 2D angle)
+    theta_init.append(
+        angle_between_points(skel[0, :2], skel[5, :2], skel[6, :2])
+    )  # Eye angle
 
     return np.array(theta_init, dtype=float)
 
@@ -143,4 +163,4 @@ if __name__ == "__main__":
         cv2.imshow("Annotated Pose", cv2.cvtColor(annotated_img, cv2.COLOR_RGB2BGR))
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-# 8joints
+# 13joints
