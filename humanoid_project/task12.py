@@ -2,6 +2,9 @@ import cv2
 import mediapipe as mp  # type: ignore
 import numpy as np
 
+# Set global print options to avoid scientific notation
+np.set_printoptions(suppress=True, precision=6)
+
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 
@@ -39,6 +42,9 @@ BODY25_MAP = [
 def extract_keypoints(image_path):
     """Detects all people and returns list of [25,3] arrays (x, y, confidence)."""
     image = cv2.imread(image_path)
+    if image is None:
+        raise FileNotFoundError(f"Image not found: {image_path}")
+
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     height, width, _ = image.shape
 
@@ -71,8 +77,8 @@ def extract_keypoints(image_path):
 
 
 if __name__ == "__main__":
-    img_path = "pose1.jpg"  # update with your actual image
+    img_path = "pose1.jpg"  # Update with your actual image path
     skeletons = extract_keypoints(img_path)
     print(f"Detected {len(skeletons)} skeleton(s)")
     for i, s in enumerate(skeletons):
-        print(f"\nPerson {i+1} keypoints (x, y, conf):\n", s)
+        print(f"\nPerson {i+1} keypoints (x, y, conf):\n{s}")
