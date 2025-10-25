@@ -1,0 +1,21 @@
+# Virtual environments
+.venv/
+.venv310/
+humanoid_project/.venv/
+humanoid_project/.venv310/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+
+# Build artifacts
+*.egg-info/
+build/
+dist/
