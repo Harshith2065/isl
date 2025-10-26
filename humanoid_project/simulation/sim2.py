@@ -1,3 +1,5 @@
+"""Humanoid walking environment version 2 using PyBullet and Gymnasium for an input image."""
+
 import pybullet as p  # type: ignore
 import pybullet_data  # type: ignore
 import numpy as np
@@ -6,21 +8,12 @@ from gymnasium import spaces  # type: ignore
 import time
 import sys
 
-sys.path.append("../scripts")  # relative path to the module folder
-
+sys.path.append("../scripts")  # adjust if your module folder is elsewhere
 from task13_8 import extract_keypoints, skeleton_to_joint_angles
-
-# Import your pose extraction functions
-from task13_8 import (
-    extract_keypoints,
-    skeleton_to_joint_angles,
-)  # make sure path is correct
 
 
 class HumanoidWalkEnv(gym.Env):
-    """
-    Custom environment to simulate a humanoid in PyBullet.
-    """
+    """Custom environment to simulate a humanoid in PyBullet."""
 
     def __init__(self, render=True):
         super().__init__()
@@ -66,9 +59,18 @@ class HumanoidWalkEnv(gym.Env):
         self.humanoid_id = p.loadURDF("task2/humanoid.urdf", [0, 0, 1.0])
 
         if initial_pose is not None:
+            # Convert degrees → radians if needed
+            initial_pose = np.array(initial_pose, dtype=float)
+            if np.max(initial_pose) > 2 * np.pi:  # likely in degrees
+                initial_pose = np.deg2rad(initial_pose)
+
             for i, j in enumerate(self.joint_indices):
                 if i < len(initial_pose):
-                    p.resetJointState(self.humanoid_id, j, initial_pose[i])
+                    joint_info = p.getJointInfo(self.humanoid_id, j)
+                    lower = joint_info[8]
+                    upper = joint_info[9]
+                    angle = np.clip(initial_pose[i], lower, upper)
+                    p.resetJointState(self.humanoid_id, j, angle)
 
         obs = self._get_observation()
         return obs, {}
@@ -106,13 +108,19 @@ class HumanoidWalkEnv(gym.Env):
 
     def _compute_reward(self, obs):
         """Simple reward: encourage upright torso height."""
-        base_pos, _ = p.getBasePositionAndOrientation(self.humanoid_id)
-        height = base_pos[2]
-        return height  # higher → better
+        try:
+            base_pos, _ = p.getBasePositionAndOrientation(self.humanoid_id)
+            height = base_pos[2]
+            return height  # higher → better
+        except p.error:
+            return 0.0
 
     def _check_termination(self):
-        base_pos, _ = p.getBasePositionAndOrientation(self.humanoid_id)
-        return base_pos[2] < 0.3  # if it falls
+        try:
+            base_pos, _ = p.getBasePositionAndOrientation(self.humanoid_id)
+            return base_pos[2] < 0.3  # if it falls
+        except p.error:
+            return True
 
     # ----------------------------------------------------------
 

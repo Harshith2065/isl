@@ -1,3 +1,5 @@
+"""Humanoid walking environment using PyBullet and Gymnasium."""
+
 import pybullet as p  # type: ignore
 import pybullet_data  # type: ignore
 import numpy as np

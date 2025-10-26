@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./humanoid_project/scripts"
+    ]
+}

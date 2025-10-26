@@ -1,3 +1,5 @@
+"""Simple Gymnasium environment test script."""
+
 import gymnasium as gym  # type: ignore
 
 env = gym.make("CartPole-v1", render_mode="human")

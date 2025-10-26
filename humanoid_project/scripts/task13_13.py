@@ -1,3 +1,5 @@
+"""Task 1.3: Convert detected skeletons to initial pose vector θ_init with 13 DOFs."""
+
 import cv2
 import mediapipe as mp  # type: ignore
 import numpy as np

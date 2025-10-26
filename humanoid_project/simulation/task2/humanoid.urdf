@@ -1,3 +1,5 @@
+<!--SIMPLE HUMANOID URDF-->
+
 <?xml version="1.0"?>
 <robot name="simple_humanoid">
 

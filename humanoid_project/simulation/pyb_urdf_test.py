@@ -1,3 +1,5 @@
+"""Simple PyBullet test script to load a humanoid URDF model."""
+
 import pybullet as p, pybullet_data  # type: ignore
 
 p.connect(p.GUI)

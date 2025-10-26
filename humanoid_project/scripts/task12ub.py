@@ -1,3 +1,5 @@
+"""Task 1.2 _ Version2b: Extract 25-keypoint human poses from an input image using Mediapipe and matplotlib."""
+
 import cv2
 import mediapipe as mp  # type: ignore
 import numpy as np

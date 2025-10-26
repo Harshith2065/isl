@@ -1,6 +1,9 @@
+"""Task 1.1: Load and preprocess an image for pose estimation."""
+
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+
 
 def load_and_preprocess_image(image_path):
     image = cv2.imread(image_path)
@@ -10,8 +13,9 @@ def load_and_preprocess_image(image_path):
     image_resized = cv2.resize(image_rgb, (640, 480))
     return image_resized
 
+
 if __name__ == "__main__":
-    path = "pose1.jpg"  # replace with an actual image file
+    path = "../images/pose1.jpg"  # replace with an actual image file
     img = load_and_preprocess_image(path)
     plt.imshow(img)
     plt.title("Preprocessed Image")
