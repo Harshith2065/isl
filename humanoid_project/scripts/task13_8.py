@@ -51,7 +51,7 @@ def extract_keypoints(image_path):
     with mp_pose.Pose(
         static_image_mode=True,
         model_complexity=2,
-        enable_segmentation=False,
+        enable_segmentation=True,
         min_detection_confidence=0.5,
     ) as pose:
 

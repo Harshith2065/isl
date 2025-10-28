@@ -79,7 +79,7 @@ def extract_keypoints(image_path):
 
 
 if __name__ == "__main__":
-    img_path = "pose1.jpg"  # Update with your actual image path
+    img_path = "../test/3.jpg"  # Update with your actual image path
     skeletons = extract_keypoints(img_path)
     print(f"Detected {len(skeletons)} skeleton(s)")
     for i, s in enumerate(skeletons):

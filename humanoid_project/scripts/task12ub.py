@@ -95,7 +95,7 @@ if __name__ == "__main__":
     # Display using Matplotlib (non-blocking)
     plt.figure(figsize=(10, 10))
     plt.imshow(annotated_img)
-    plt.savefig("annotated_pose.png")
+    plt.savefig("annotated.png")
     plt.title("Detected Pose")
     plt.axis("off")
     plt.show(block=False)
