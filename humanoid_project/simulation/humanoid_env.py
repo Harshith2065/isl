@@ -27,7 +27,7 @@ class HumanoidWalkEnv(gym.Env):
 
         # Load ground and humanoid model
         self.plane_id = p.loadURDF("plane.urdf")
-        self.humanoid_id = p.loadURDF("task2/humanoid.urdf", [0, 0, 1.0])
+        self.humanoid_id = p.loadURDF("../assets/humanoid/humanoid.urdf", [0, 0, 1.0])
 
         # Identify movable joints
         self.num_joints = p.getNumJoints(self.humanoid_id)
@@ -54,7 +54,7 @@ class HumanoidWalkEnv(gym.Env):
         p.setGravity(0, 0, -9.81)
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.loadURDF("plane.urdf")
-        self.humanoid_id = p.loadURDF("task2/humanoid.urdf", [0, 0, 1.0])
+        self.humanoid_id = p.loadURDF("../assets/humanoid/humanoid.urdf", [0, 0, 1.0])
 
         if initial_pose is not None:
             for i, j in enumerate(self.joint_indices):
